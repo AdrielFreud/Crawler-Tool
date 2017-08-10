@@ -5,7 +5,7 @@
 # FB: http://www.facebook.com/xrn401
 #   =>DebutySecTeamSecurity<=
 
-# MODO DE USO: crawler.py http://site.com/
+# MODO DE USO: crawler.py -u http://site.com/
 # OBS: Nao esqueca do 'HTTP' or 'HTTPS'
 
 import urllib

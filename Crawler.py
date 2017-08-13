@@ -14,6 +14,15 @@ import argparse
 from bs4 import BeautifulSoup
 from time import sleep
 import requests
+import socket
+import json
+import sys
+import time, datetime
+
+ts = time.time()
+dt = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
+today = datetime.datetime.today()
+t = today.strftime("[%H:%M:%S] - ")
 
 menu = """\033[1;36m
   ____                    _            __        __   _     
@@ -30,13 +39,37 @@ args = parse.parse_args()
 
 header = {'user-agent': 'Mozilla/5.0 (X11; Linux i686; rv:43.0) Gecko/10100101 Firefox/43.0 Iceweasel/43.0.4'}
 
+def printar_detalhes(url):
+	if 'https://' in url:
+		IP = socket.gethostbyname(url.strip('https://'))
+
+	elif 'http://' in url:
+		IP = socket.gethostbyname(url.strip('http://'))
+
+	req = requests.get('http://ip-api.com/json/'+IP, headers=header)
+	Geo = json.loads(req.text)
+	print('')
+	print('IP: %s'%Geo['query']+'\n')
+	print('Country: %s'%Geo['country']+'\n')
+	print('Country code: %s'%Geo['countryCode']+'\n')
+	print('Region: %s'%Geo['regionName']+'\n')
+	print('Region code: %s'%Geo['region']+'\n')
+	print('City: %s'%Geo['city']+'\n')
+	print('Zip Code: %s'%Geo['zip']+'\n')
+	print('Latitude: %s'%Geo['lat']+'\n')
+	print('Longitude: %s'%Geo['lon']+'\n')
+	print('Timezone: %s'%Geo['timezone']+'\n')
+	print('ISP: %s'%Geo['isp']+'\n')
+	print('Organization: %s'%Geo['org']+'\n')
+	print('AS number/name: %s'%Geo['as']+'\n')
+
 def email_extrator(url):
 	print("\n\033[1;36m<==================== Emails! ====================> \033[1;m")
 	abrir = requests.get(url, headers=header)
 	code = abrir.text
 	e_mail = re.findall(r"[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]@[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]",code)
 	for emails in e_mail:
-		print('\n\033[31m[*][==>] Email: \033[1;m' + str(emails))
+		print('\n\033[31m'+t+'[==>] Email: \033[1;m' + str(emails))
 
 def whois(url):
 	site = 'https://www.whois.com/whois/{0}'.format(url)
@@ -61,7 +94,7 @@ def capture(url):
 			allinks0 = bt.find_all('meta')
 			print("\033[1;36m<================== Information ==================>\n\n \033[1;m ")
 			for link in allinks0:
-				print("\033[31m[!][==>] Information: \033[1;m"+ str(link['content']))
+				print("\033[31m"+t+"[==>] Information: \033[1;m"+ str(link['content']))
 				print("")
 		except:
 			pass		
@@ -72,16 +105,16 @@ def capture(url):
 		html = abrir.read()
 		l = re.findall(r'<a href="?\'?(https?:\/\/[^"\'>]*)', html)
 		print("\033[1;36m<==================== Links ====================>\n\n \033[1;m ")
-		print("\033[31m[+][==>] Links Externos: \033[1;m"+ str(link1))
+		print("\033[31m"+t+"[==>] Links Externos: \033[1;m"+ str(link1))
 		print("")
-		print("\033[31m[+][==>] Links Locais: \033[1;m"+ str(link2))
+		print("\033[31m"+t+"[==>] Links Locais: \033[1;m"+ str(link2))
 		for o in l:
-			print("\033[31m[+][==>] Link: \033[1;m"+ str(o))
+			print("\033[31m"+t+"[==>] Link: \033[1;m"+ str(o))
 			print("")
 			print("")
 		for link in allinks:
 			try:
-				print("\033[31m[+][==>] Link: \033[1;m"+ str(link['href']))
+				print("\033[31m"+t+"[==>] Link: \033[1;m"+ str(link['href']))
 				print("")
 			except:
 				continue
@@ -94,13 +127,15 @@ def capture(url):
 if args.url:
 	print(menu)
 	req = requests.get(args.url, headers=header)
-	print('[+] Connection: %s'%req.request.headers['Connection']) 
-	print('[+] Accept-Encoding: %s'%req.request.headers['Accept-Encoding'])
-	print('[+] Accept: %s'%req.request.headers['Accept'])
-	print('[+] User-Agent: %s'%req.request.headers['user-agent'])
+	print('\033[31m[+] Connection: %s\033[1;m'%req.request.headers['Connection']) 
+	print('\033[31m[+] Accept-Encoding: %s\033[1;m'%req.request.headers['Accept-Encoding'])
+	print('\033[31m[+] Accept: %s\033[1;m'%req.request.headers['Accept'])
+	print('\033[31m[+] User-Agent: %s\033[1;m'%req.request.headers['user-agent'])
 	capture(args.url)
+	printar_detalhes(args.url)
 	whois(args.url)
 	email_extrator(args.url)
+	exit()
 else:
 	print(menu)
-	parse.print_help()
+parse.print_help()

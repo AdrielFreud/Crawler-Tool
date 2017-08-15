@@ -8,7 +8,6 @@
 # MODO DE USO: crawler.py http://site.com/
 # OBS: Nao esqueca do 'HTTP' or 'HTTPS'
 
-import urllib
 import re
 import argparse
 from bs4 import BeautifulSoup
@@ -31,7 +30,7 @@ menu = """\033[1;36m
 | |___| | | (_| |\ V  V /| |  __/ |      \ V  V /  __/ |_) |
  \____|_|  \__,_| \_/\_/ |_|\___|_|       \_/\_/ \___|_.__/ 
                                                             
-Powered by Adriel Freud\n\033[1;m""" 
+Powered by Adriel Freud\n""" 
 
 parse = argparse.ArgumentParser(description="Url for Get Informations of WebSite")
 parse.add_argument("-u", "--url", help="Url for get Informations! ")
@@ -64,7 +63,7 @@ def printar_detalhes(url):
 	print('AS number/name: %s'%Geo['as']+'\n')
 
 def email_extrator(url):
-	print("\n\033[1;36m<==================== Emails! ====================> \033[1;m")
+	print("\n\033[1;36m<==================== Emails! ====================>")
 	abrir = requests.get(url, headers=header)
 	code = abrir.text
 	e_mail = re.findall(r"[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]@[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]",code)
@@ -81,20 +80,21 @@ def whois(url):
 		bs = BeautifulSoup(html, 'lxml')
 		div = bs.find_all('pre', {'class':'df-raw'})
 		for divs in div:
-			print('\033[1;36m<==================== info ==================>\n\n \033[1;m \n%s'%divs.get_text())
+			print('\033[1;36m<==================== info ==================>\n\n%s'%divs.get_text())
 
 def capture(url):
-	abrir = urllib.urlopen(url)
-	resp = abrir.code
-	if resp == 200:
+	req = requests.get(url, headers=header)
+	code = req.status_code
+	html = req.text
+	if code == 200:
 		print("\n[*]Request Succefully!\n")
-		bt = BeautifulSoup(abrir.read(), "lxml")
+		bt = BeautifulSoup(html, "lxml")
 		allinks = bt.find_all('a')
 		try:
 			allinks0 = bt.find_all('meta')
-			print("\033[1;36m<================== Information ==================>\n\n \033[1;m ")
+			print("\033[1;36m<================== Information ==================>\n\n")
 			for link in allinks0:
-				print("\033[31m"+t+"[==>] Information: \033[1;m"+ str(link['content']))
+				print("\033[31m"+t+"[==>] Information: "+ str(link['content']))
 				print("")
 		except:
 			pass		
@@ -102,40 +102,39 @@ def capture(url):
 		link1 = bt.link['href']
 		link2 = bt.img['src']
 
-		html = abrir.read()
+		html = req.text
 		l = re.findall(r'<a href="?\'?(https?:\/\/[^"\'>]*)', html)
-		print("\033[1;36m<==================== Links ====================>\n\n \033[1;m ")
-		print("\033[31m"+t+"[==>] Links Externos: \033[1;m"+ str(link1))
+		print("\033[1;36m<==================== Links ====================>\n\n")
+		print("\033[31m"+t+"[==>] Links Externos:"+ str(link1))
 		print("")
-		print("\033[31m"+t+"[==>] Links Locais: \033[1;m"+ str(link2))
+		print("\033[31m"+t+"[==>] Links Locais: "+ str(link2))
 		for o in l:
-			print("\033[31m"+t+"[==>] Link: \033[1;m"+ str(o))
+			print("\033[31m"+t+"[==>] Link: "+ str(o))
 			print("")
 			print("")
 		for link in allinks:
 			try:
-				print("\033[31m"+t+"[==>] Link: \033[1;m"+ str(link['href']))
+				print("\033[31m"+t+"[==>] Link: "+ str(link['href']))
 				print("")
 			except:
 				continue
 
 	else:
-		print("\n\033[31m[!]Request Failed, Exiting Program...\n \033[1;m")
+		print("\n\033[31m[!]Request Failed, Exiting Program...\n ")
 		sleep(5)
-		exit()
+		sys.exit()
 
 if args.url:
 	print(menu)
 	req = requests.get(args.url, headers=header)
-	print('\033[31m[+] Connection: %s\033[1;m'%req.request.headers['Connection']) 
-	print('\033[31m[+] Accept-Encoding: %s\033[1;m'%req.request.headers['Accept-Encoding'])
-	print('\033[31m[+] Accept: %s\033[1;m'%req.request.headers['Accept'])
-	print('\033[31m[+] User-Agent: %s\033[1;m'%req.request.headers['user-agent'])
+	print('\033[31m[+] Connection: %s'%req.request.headers['Connection']) 
+	print('\033[31m[+] Accept-Encoding: %s'%req.request.headers['Accept-Encoding'])
+	print('\033[31m[+] Accept: %s'%req.request.headers['Accept'])
+	print('\033[31m[+] User-Agent: %s'%req.request.headers['user-agent'])
 	capture(args.url)
 	printar_detalhes(args.url)
 	whois(args.url)
 	email_extrator(args.url)
-	exit()
 else:
 	print(menu)
-parse.print_help()
+	parse.print_help()

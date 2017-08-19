@@ -1,4 +1,4 @@
-#/usr/bin/python
+#!/usr/bin/python
 
 # Desenvolvido por Adriel Freud!
 # Contato: usuariocargo2016@gmail.com 
@@ -68,7 +68,7 @@ def email_extrator(url):
 	code = abrir.text
 	e_mail = re.findall(r"[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]@[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]",code)
 	for emails in e_mail:
-		print('\n\033[31m'+t+'[==>] Email: ' + str(emails))
+		print('\n\033[31m'+t+'[==>] Email: \033[1;m' + str(emails))
 
 def whois(url):
 	site = 'https://www.whois.com/whois/{0}'.format(url)
@@ -127,10 +127,14 @@ def capture(url):
 if args.url:
 	print(menu)
 	req = requests.get(args.url, headers=header)
-	print('\033[31m[+] Connection: %s'%req.request.headers['Connection']) 
-	print('\033[31m[+] Accept-Encoding: %s'%req.request.headers['Accept-Encoding'])
+	print('\033[31m[+] Data: %s'%req.headers['Date'])
+	print('\033[31m[+] Server: %s'%req.headers['server'])
+	print('\033[31m[+] Cookie Expires: %s'%req.headers['expires'])
+	print('\033[31m[+] Connection: %s'%req.headers['connection']) 
+	print('\033[31m[+] Accept-Encoding: %s'%req.request.headers['accept-encoding'])
 	print('\033[31m[+] Accept: %s'%req.request.headers['Accept'])
 	print('\033[31m[+] User-Agent: %s'%req.request.headers['user-agent'])
+	print('\033[31m[+] Content-Type: %s'%req.headers['content-type'])
 	capture(args.url)
 	printar_detalhes(args.url)
 	whois(args.url)

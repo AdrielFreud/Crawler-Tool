@@ -68,7 +68,7 @@ def email_extrator(url):
 	code = abrir.text
 	e_mail = re.findall(r"[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]@[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]",code)
 	for emails in e_mail:
-		print('\n\033[31m'+t+'[==>] Email: \033[1;m' + str(emails))
+		print('\n\033[31m'+t+'[==>] Email: ' + str(emails))
 
 def whois(url):
 	site = 'https://www.whois.com/whois/{0}'.format(url)

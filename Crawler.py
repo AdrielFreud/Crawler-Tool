@@ -39,6 +39,7 @@ args = parse.parse_args()
 header = {'user-agent': 'Mozilla/5.0 (X11; Linux i686; rv:43.0) Gecko/10100101 Firefox/43.0 Iceweasel/43.0.4'}
 
 def printar_detalhes(url):
+
 	if 'https://' in url:
 		IP = socket.gethostbyname(url.strip('https://'))
 
@@ -102,7 +103,6 @@ def capture(url):
 		link1 = bt.link['href']
 		link2 = bt.img['src']
 
-		html = req.text
 		l = re.findall(r'<a href="?\'?(https?:\/\/[^"\'>]*)', html)
 		print("\033[1;36m<==================== Links ====================>\n\n")
 		print("\033[31m"+t+"[==>] Links Externos:"+ str(link1))
@@ -129,8 +129,14 @@ if args.url:
 	req = requests.get(args.url, headers=header)
 	print('\033[31m[+] Data: %s'%req.headers['Date'])
 	print('\033[31m[+] Server: %s'%req.headers['server'])
-	print('\033[31m[+] Cookie Expires: %s'%req.headers['expires'])
-	print('\033[31m[+] Connection: %s'%req.headers['connection']) 
+	try:
+		print('\033[31m[+] Cookie Expires: %s'%req.headers['expires'])
+	except:
+		pass
+	try:
+		print('\033[31m[+] Connection: %s'%req.headers['connection'])
+	except:
+		pass 
 	print('\033[31m[+] Accept-Encoding: %s'%req.request.headers['accept-encoding'])
 	print('\033[31m[+] Accept: %s'%req.request.headers['Accept'])
 	print('\033[31m[+] User-Agent: %s'%req.request.headers['user-agent'])
@@ -141,4 +147,4 @@ if args.url:
 	email_extrator(args.url)
 else:
 	print(menu)
-	parse.print_help()
+parse.print_help()

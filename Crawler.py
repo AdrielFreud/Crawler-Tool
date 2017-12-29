@@ -105,16 +105,27 @@ def capture(url):
 
 		l = re.findall(r'<a href="?\'?(https?:\/\/[^"\'>]*)', html)
 		print("\033[1;36m<==================== Links ====================>\n\n")
-		print("\033[31m"+t+"[==>] Links Externos:"+ str(link1))
+		if 'http' in link1:
+			print("\033[31m"+t+"[==>] Links Externos:"+ str(link1))
+		else:
+			print("\033[31m"+t+"[==>] Links Externos:"+ str("http://"+link1))
+
 		print("")
-		print("\033[31m"+t+"[==>] Links Locais: "+ str(link2))
+		print("\033[31m"+t+"[==>] Links Locais: "+ str("http://"+link2))
+
 		for o in l:
-			print("\033[31m"+t+"[==>] Link: "+ str(o))
+			if 'http' in o:
+				print("\033[31m"+t+"[==>] Link: "+ str(o))
+			else:
+				print("\033[31m"+t+"[==>] Link: "+ str("http://"+o))
 			print("")
 			print("")
 		for link in allinks:
 			try:
-				print("\033[31m"+t+"[==>] Link: "+ str(link['href']))
+				if 'http' in link['href']:
+					print("\033[31m"+t+"[==>] Link: "+ str(link['href']))
+				else:
+					print("\033[31m"+t+"[==>] Link: "+ str("http://"+link['href']))
 				print("")
 			except:
 				continue
@@ -128,7 +139,10 @@ if args.url:
 	print(menu)
 	req = requests.get(args.url, headers=header)
 	print('\033[31m[+] Data: %s'%req.headers['Date'])
-	print('\033[31m[+] Server: %s'%req.headers['server'])
+	try:
+		print('\033[31m[+] Server: %s'%req.headers['server'])
+	except:
+		pass
 	try:
 		print('\033[31m[+] Cookie Expires: %s'%req.headers['expires'])
 	except:

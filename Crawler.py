@@ -101,19 +101,24 @@ def capture(url):
 		except:
 			pass		
 
-		link1 = bt.link['href']
-		link2 = bt.img['src']
-
-		l = re.findall(r'<a href="?\'?(https?:\/\/[^"\'>]*)', html)
 		print("\033[1;36m<==================== Links ====================>\n\n")
-		if 'http' in link1:
-			print("\033[31m"+t+"[==>] Links Externos:"+ str(link1))
-		else:
-			print("\033[31m"+t+"[==>] Links Externos:"+ str("http://"+link1))
+		try:
+			link1 = bt.link['href']
+			if 'http' in link1:
+				print("\033[31m"+t+"[==>] Links Externos:"+ str(link1))
+			else:
+				print("\033[31m"+t+"[==>] Links Externos:"+ str("http://"+link1))
+		except:
+			pass
 
 		print("")
-		print("\033[31m"+t+"[==>] Links Locais: "+ str("http://"+link2))
+		try:
+			link2 = bt.img['src']
+			print("\033[31m"+t+"[==>] Links Locais: "+ str("http://"+link2))
+		except:
+			pass
 
+		l = re.findall(r'<a href="?\'?(https?:\/\/[^"\'>]*)', html)
 		for o in l:
 			if 'http' in o:
 				print("\033[31m"+t+"[==>] Link: "+ str(o))
@@ -162,4 +167,4 @@ if args.url:
 	email_extrator(args.url)
 else:
 	print(menu)
-parse.print_help()
+	parse.print_help()

@@ -18,6 +18,7 @@ import socket
 import json
 import sys
 import time, datetime
+import urllib2
 
 ts = time.time()
 dt = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
@@ -144,23 +145,8 @@ def capture(url):
 if args.url:
 	print(menu)
 	req = requests.get(args.url, headers=header)
-	print('\033[31m[+] Data: %s'%req.headers['Date'])
-	try:
-		print('\033[31m[+] Server: %s'%req.headers['server'])
-	except:
-		pass
-	try:
-		print('\033[31m[+] Cookie Expires: %s'%req.headers['expires'])
-	except:
-		pass
-	try:
-		print('\033[31m[+] Connection: %s'%req.headers['connection'])
-	except:
-		pass 
-	print('\033[31m[+] Accept-Encoding: %s'%req.request.headers['accept-encoding'])
-	print('\033[31m[+] Accept: %s'%req.request.headers['Accept'])
-	print('\033[31m[+] User-Agent: %s'%req.request.headers['user-agent'])
-	print('\033[31m[+] Content-Type: %s'%req.headers['content-type'])
+	c = urllib2.urlopen(args.url)
+	print(c.info())
 	capture(args.url)
 	printar_detalhes(args.url)
 	whois(args.url)

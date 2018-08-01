@@ -71,7 +71,10 @@ def email_extrator(url):
 	code = abrir.text
 	e_mail = re.findall(r"[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]@[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]",code)
 	for emails in e_mail:
-		print('\n\033[31m'+t+'[==>] Email: ' + str(emails))
+		if emails:
+			print('\n\033[31m'+t+'[==>] Email: ' + str(emails))
+		else:
+			exit(0)
 
 def whois(url):
 	site = 'https://www.whois.com/whois/{0}'.format(url)
@@ -92,50 +95,33 @@ def capture(url):
 	if code == 200:
 		print("\n[*]Request Succefully!\n")
 		bt = BeautifulSoup(html, "lxml")
-		allinks = bt.find_all('a')
-		try:
-			allinks0 = bt.find_all('meta')
-			print("\033[1;36m<================== Information ==================>\n\n")
-			for link in allinks0:
-				print("\033[31m"+t+"[==>] Information: "+ str(link['content']))
-				print("")
-		except:
-			pass		
 
-		print("\033[1;36m<==================== Links ====================>\n\n")
-		try:
-			link1 = bt.link['href']
-			if 'http' in link1:
-				print("\033[31m"+t+"[==>] Links Externos:"+ str(link1))
-			else:
-				print("\033[31m"+t+"[==>] Links Externos:"+ str("http://"+link1))
-		except:
-			pass
+		a_ref = bt.find_all('a')
+		meta = bt.find_all('meta')
+		href = bt.link['href']
+		img = bt.img['src']
 
-		print("")
-		try:
-			link2 = bt.img['src']
-			print("\033[31m"+t+"[==>] Links Locais: "+ str("http://"+link2))
-		except:
-			pass
-
-		l = re.findall(r'<a href="?\'?(https?:\/\/[^"\'>]*)', html)
-		for o in l:
-			if 'http' in o:
-				print("\033[31m"+t+"[==>] Link: "+ str(o))
-			else:
-				print("\033[31m"+t+"[==>] Link: "+ str("http://"+o))
-			print("")
-			print("")
-		for link in allinks:
-			try:
+		if a_ref:
+			for link in a_ref:
 				if 'http' in link['href']:
-					print("\033[31m"+t+"[==>] Link: "+ str(link['href']))
-				else:
-					print("\033[31m"+t+"[==>] Link: "+ str("http://"+link['href']))
-				print("")
-			except:
-				continue
+					print("\033[31m"+t+"[==>] Link: %s"%link['href'])
+				print("\033[31m"+t+"[==>] Link: http://%s"%link['href'])
+
+		if meta:
+			print("\033[1;36m<================== Information ==================>\n\n")
+			for link in meta:
+				print("\033[31m"+t+"[==>] Information: %s"%link['content'])
+				print("")		
+
+		if href:
+			print("\033[1;36m<==================== Links ====================>\n\n")
+			if 'http' in href:
+				print("\033[31m"+t+"[==>] Links Externos: %s"%href)
+
+			print("\033[31m"+t+"[==>] Links Externos: http://%s"%href)
+
+		if img:
+			print("\033[31m"+t+"[==>] Links Locais: http://%s"%img)
 
 	else:
 		print("\n\033[31m[!]Request Failed, Exiting Program...\n ")
@@ -143,7 +129,10 @@ def capture(url):
 		sys.exit()
 
 if args.url:
+	if not 'http://' in args.url:
+		args.url = "http://%s"%args.url
 	print(menu)
+
 	req = requests.get(args.url, headers=header)
 	c = urllib2.urlopen(args.url)
 	print(c.info())

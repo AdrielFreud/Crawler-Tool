@@ -25,7 +25,7 @@ dt = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
 today = datetime.datetime.today()
 t = today.strftime("[%H:%M:%S] - ")
 
-menu = """\033[1;36m
+menu = r"""\033[1;36m
   ____                    _            __        __   _     
  / ___|_ __ __ ___      _| | ___ _ __  \ \      / /__| |__  
 | |   | '__/ _` \ \ /\ / / |/ _ \ '__|  \ \ /\ / / _ \ '_ \ 
@@ -70,11 +70,15 @@ def email_extrator(url):
 	abrir = requests.get(url, headers=header)
 	code = abrir.text
 	e_mail = re.findall(r"[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]@[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]",code)
-	for emails in e_mail:
-		if emails:
-			print('\n\033[31m'+t+'[==>] Email: ' + str(emails))
-		else:
-			exit(0)
+	
+	if e_mail:
+		for emails in e_mail:
+			try:
+				print('\n\033[31m'+t+'[==>] Email: %s'%emails)
+			except:
+				pass
+	else:
+		exit(0)
 
 def whois(url):
 	site = 'https://www.whois.com/whois/{0}'.format(url)
@@ -97,42 +101,49 @@ def capture(url):
 		bt = BeautifulSoup(html, "lxml")
 
 		a_ref = bt.find_all('a')
-		meta = bt.find_all('meta')
+		meta = bt.find_all('link')
 		href = bt.link['href']
 		img = bt.img['src']
 
-		if a_ref:
+		if a_ref != None:
 			for link in a_ref:
-				if 'http' in link['href']:
-					print("\033[31m"+t+"[==>] Link: %s"%link['href'])
-				print("\033[31m"+t+"[==>] Link: http://%s"%link['href'])
+				try:
+					if 'http' in link['href']:
+						print("\033[31m"+t+"[==>] Link: %s"%link['href'])
+				except:
+					pass
 
-		if meta:
+		if meta != None:
 			print("\033[1;36m<================== Information ==================>\n\n")
 			for link in meta:
-				print("\033[31m"+t+"[==>] Information: %s"%link['content'])
-				print("")		
+				try:
+					print("\033[31m"+t+"[==>] Information: %s"%link['href'])
+					print("")
+				except:
+					pass
 
-		if href:
+		if href != None:
 			print("\033[1;36m<==================== Links ====================>\n\n")
-			if 'http' in href:
-				print("\033[31m"+t+"[==>] Links Externos: %s"%href)
+			try:
+				if 'http' in href:
+					print("\033[31m"+t+"[==>] Links Externos: %s"%href)
 
-			print("\033[31m"+t+"[==>] Links Externos: http://%s"%href)
+				print("\033[31m"+t+"[==>] Links Externos: http://%s"%href)
+			except:
+				pass
 
-		if img:
-			print("\033[31m"+t+"[==>] Links Locais: http://%s"%img)
-
+		if img != None:
+			try:
+				print("\033[31m"+t+"[==>] Links Locais: http://%s"%img)
+			except:
+				pass
 	else:
 		print("\n\033[31m[!]Request Failed, Exiting Program...\n ")
 		sleep(5)
 		sys.exit()
 
 if args.url:
-	if not 'http://' in args.url:
-		args.url = "http://%s"%args.url
 	print(menu)
-
 	req = requests.get(args.url, headers=header)
 	c = urllib2.urlopen(args.url)
 	print(c.info())

@@ -41,12 +41,7 @@ args = parse.parse_args()
 header = {'user-agent': 'Mozilla/5.0 (X11; Linux i686; rv:43.0) Gecko/10100101 Firefox/43.0 Iceweasel/43.0.4'}
 
 def printar_detalhes(url):
-
-	if 'https://' in url:
-		IP = socket.gethostbyname(url.strip('https://'))
-
-	elif 'http://' in url:
-		IP = socket.gethostbyname(url.strip('http://'))
+	IP = socket.gethostbyname(url.strip('https://'))
 
 	req = requests.get('http://ip-api.com/json/'+IP, headers=header)
 	Geo = json.loads(req.text)
@@ -148,7 +143,10 @@ if args.url:
 	c = urllib2.urlopen(args.url)
 	print(c.info())
 	capture(args.url)
-	printar_detalhes(args.url)
+	try:
+		printar_detalhes(args.url)
+	except:
+		print("Impossivel Resolver Servidor DNS!\n")
 	whois(args.url)
 	email_extrator(args.url)
 else:

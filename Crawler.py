@@ -25,7 +25,7 @@ dt = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
 today = datetime.datetime.today()
 t = today.strftime("[%H:%M:%S] - ")
 
-menu = r"""\033[1;36m
+menu = """\033[1;36m
   ____                    _            __        __   _     
  / ___|_ __ __ ___      _| | ___ _ __  \ \      / /__| |__  
 | |   | '__/ _` \ \ /\ / / |/ _ \ '__|  \ \ /\ / / _ \ '_ \ 
@@ -34,7 +34,7 @@ menu = r"""\033[1;36m
                                                             
 Powered by Adriel Freud\n""" 
 
-parse = argparse.ArgumentParser(description="Url for Get Informations of WebSite")
+parse = argparse.ArgumentParser(description="For Get Informations of WebSite")
 parse.add_argument("-u", "--url", help="Url for get Informations! ")
 args = parse.parse_args()
 
@@ -42,7 +42,6 @@ header = {'user-agent': 'Mozilla/5.0 (X11; Linux i686; rv:43.0) Gecko/10100101 F
 
 def printar_detalhes(url):
 	IP = socket.gethostbyname(url.strip('https://'))
-
 	req = requests.get('http://ip-api.com/json/'+IP, headers=header)
 	Geo = json.loads(req.text)
 	print('')
@@ -97,8 +96,19 @@ def capture(url):
 
 		a_ref = bt.find_all('a')
 		meta = bt.find_all('link')
-		href = bt.link['href']
-		img = bt.img['src']
+		try:
+			href = bt.link['href']
+			img = bt.img['src']
+			if href != None:
+				print("\033[1;36m<==================== Links ====================>\n\n")
+				if 'http' in href:
+					print("\033[31m"+t+"[==>] Links Externos: %s"%href)
+
+				print("\033[31m"+t+"[==>] Links Externos: http://%s"%href)
+				if img != None:
+					print("\033[31m"+t+"[==>] Links Locais: http://%s"%img)
+		except:
+			pass
 
 		if a_ref != None:
 			for link in a_ref:
@@ -116,22 +126,6 @@ def capture(url):
 					print("")
 				except:
 					pass
-
-		if href != None:
-			print("\033[1;36m<==================== Links ====================>\n\n")
-			try:
-				if 'http' in href:
-					print("\033[31m"+t+"[==>] Links Externos: %s"%href)
-
-				print("\033[31m"+t+"[==>] Links Externos: http://%s"%href)
-			except:
-				pass
-
-		if img != None:
-			try:
-				print("\033[31m"+t+"[==>] Links Locais: http://%s"%img)
-			except:
-				pass
 	else:
 		print("\n\033[31m[!]Request Failed, Exiting Program...\n ")
 		sleep(5)

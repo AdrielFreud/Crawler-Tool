@@ -118,7 +118,7 @@ def grabbining(url, proxy, cookie, form):
 		html = req.text
 		print("\n[*]Request Succefully!\n")
 		print("\033[1;36m<==================== Information ====================>\n\n\n")
-		print(html)
+		print(html.encode('utf-8'))
 	else:
 		print("\n\033[31m[!]Request Failed, Exiting Program...\n ")
 		sleep(3)

@@ -83,8 +83,8 @@ def whois(url):
 	if code == 200:
 		print("")
 		html = req.text
-		bs = BeautifulSoup(html, 'lxml')
-		div = bs.find_all('pre', {'class':'df-raw'})
+		bs = BeautifulSoup(html, "html.parser")
+		div = bs.find_all("pre", {"class":"df-raw"})
 		for divs in div:
 			print('\033[1;36m<==================== info ==================>\n\n%s'%divs.get_text().encode('utf-8'))
 
@@ -94,7 +94,7 @@ def capture(url):
 	if code == 200:
 		html = req.text
 		print("\n[*]Request Succefully!\n")
-		bt = BeautifulSoup(html, "lxml")
+		bt = BeautifulSoup(html, "html.parser")
 		urls = re.findall('(?<=href=["\'])https?://.+?(?=["\'])', html)
 		print("\033[1;36m<==================== Links ====================>\n\n")
 		for u in urls:

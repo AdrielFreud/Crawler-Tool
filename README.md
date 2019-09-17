@@ -8,7 +8,7 @@
 
 
 ## AVISO
-- Caso você encontrar um bug [Click-aqui](https://github.com/AdrielFreud/Crawler-Tool/issues/new) crie um issue para eu corrigir-lo.
+- Caso você encontrar um bug [Click-aqui](https://github.com/AdrielFreud/Crawler-Tool/issues/new) crie um issue para eu corrigi-lo.
 
 ## Imagem
 ![photo]()

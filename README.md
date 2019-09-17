@@ -8,7 +8,7 @@
 
 
 ## AVISO
-- Caso você encontrar um bug [Click-aqui](https://github.com/AdrielFreud/Crawler-Tool/issues/new) e crie um issue para eu corrijir o bug.
+- Caso você encontrar um bug [Click-aqui](https://github.com/AdrielFreud/Crawler-Tool/issues/new) crie um issue para eu corrigir-lo.
 
 ## Imagem
 ![photo]()
@@ -19,7 +19,7 @@
   - Email Extrator. (hotmail, gmail etc.)
   - IP Recover.
  
- ## Dowloand
+ ## Download
 Baixe diretamente do github com:
  - git clone https://github.com/AdrielFreud/Crawler-Tool.git
  - ou https://github.com/AdrielFreud/Crawler-Tool/archive/master.zip

@@ -18,7 +18,7 @@ import socket
 import json
 import sys
 import time, datetime
-import urllib2
+import urllib.request as urllib2
 
 ts = time.time()
 dt = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
@@ -65,14 +65,11 @@ def email_extrator(url):
 	print("\n\033[1;36m<==================== Emails! ====================>")
 	abrir = requests.get(url, headers=header)
 	code = abrir.text
-	e_mail = re.findall(r"[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]@[\w.]+[\w-]+[\w_]+[\w.]+[\w-]+[\w_]",code)
+	e_mail = re.findall(r"\"?([-a-zA-Z0-9.`?{}]+@\w+\.\w+)\"?", code)
 	
 	if e_mail:
 		for emails in e_mail:
-			try:
-				print('\n\033[31m'+t+'[==>] Email: %s'%emails)
-			except:
-				pass
+			print('\n\033[31m'+t+'[==>] Email: %s'%emails)
 	else:
 		exit(0)
 
@@ -86,7 +83,7 @@ def whois(url):
 		bs = BeautifulSoup(html, "html.parser")
 		div = bs.find_all("pre", {"class":"df-raw"})
 		for divs in div:
-			print('\033[1;36m<==================== info ==================>\n\n%s'%divs.get_text().encode('utf-8'))
+			print('\033[1;36m<==================== info ==================>\n\n%s'%divs.get_text())
 
 def capture(url):
 	req = requests.get(url, headers=header)
@@ -105,23 +102,20 @@ def capture(url):
 		exit(1)
 
 def grabbining(url, proxy, cookie, form):
-
-	exec("forms = %s"%form)
-	esc = raw_input("GET/POST | [p][g] | \\[G]: ")
+	esc = str(input("GET/POST | [p][g] | \\[G]: "))
 	if esc.lower() == "p":
-		req = requests.post(url, headers=header, proxies={'http': proxy,'https': proxy}, params=forms, cookies={'Cookie':cookie})
+		req = requests.post(url, headers=header, proxies={'http': proxy,'https': proxy}, params=form, cookies={'Cookie':cookie})
 	else:
-		req = requests.get(url, headers=header, proxies={'http': proxy,'https': proxy}, params=forms, cookies={'Cookie':cookie})
+		req = requests.get(url, headers=header, proxies={'http': proxy,'https': proxy}, params=form, cookies={'Cookie':cookie})
 
 	code = req.status_code
 	if code == 200:
 		html = req.text
 		print("\n[*]Request Succefully!\n")
-		print("\033[1;36m<==================== Information ====================>\n\n\n")
+		print("\033[1;36m<==================== Information ====================>\n\n")
 		print(html.encode('utf-8'))
 	else:
 		print("\n\033[31m[!]Request Failed, Exiting Program...\n ")
-		sleep(3)
 		exit(1)
 
 if args.url:
@@ -130,12 +124,11 @@ if args.url:
 		url = sys.argv[2]
 		proxy = sys.argv[4]
 		cookie = sys.argv[6]
-		parametros = sys.argv[8]
-		grabbining(url, proxy, cookie, parametros)
+		form = sys.argv[8]
+		grabbining(url, proxy, cookie, form)
 	else:
 		print(urllib2.urlopen(args.url).info())
 		capture(args.url)
-
 		try:
 			printar_detalhes(args.url)
 		except:
